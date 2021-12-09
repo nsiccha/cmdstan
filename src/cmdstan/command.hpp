@@ -52,6 +52,7 @@
 #include <stan/services/sample/hmc_static_unit_e.hpp>
 #include <stan/services/sample/hmc_static_unit_e_adapt.hpp>
 #include <stan/services/sample/standalone_gqs.hpp>
+#include <stan/services/compute/compute.hpp>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -587,6 +588,11 @@ int command(int argc, const char *argv[]) {
         model,
         fitted_params.samples.block(0, hmc_fixed_cols, num_rows, num_cols),
         random_seed, interrupt, logger, sample_writers[0]);
+  } else if (user_method->arg("compute")) {
+    return_code = stan::services::compute(
+        model, *dynamic_cast<arg_compute *>(user_method->arg("compute")),
+        random_seed, interrupt, logger, sample_writers[0]
+    );
   } else if (user_method->arg("diagnose")) {
     list_argument *test = dynamic_cast<list_argument *>(
         parser.arg("method")->arg("diagnose")->arg("test"));
